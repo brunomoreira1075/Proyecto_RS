@@ -1,0 +1,37 @@
+<h1>Red Social</h1>
+
+{% if user.is_authenticated %}
+
+    <p>Bienvenido {{ user.username }}</p>
+
+    <a href="/crear/">Crear publicación</a>
+    <br><br>
+
+    <a href="/logout/">Cerrar sesión</a>
+
+{% else %}
+
+    <a href="/login/">Login</a>
+    <br>
+
+    <a href="/registro/">Registro</a>
+
+{% endif %}
+
+<hr>
+
+{% for post in posts %}
+
+    <h3>
+    <a href="/perfil/{{ post.usuario.username }}/">
+        {{ post.usuario.username }}
+    </a>
+    </h3>
+
+    <p>{{ post.contenido }}</p>
+
+    <small>{{ post.fecha_creacion }}</small>
+
+    <hr>
+
+{% endfor %}

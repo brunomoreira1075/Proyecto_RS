@@ -1,0 +1,28 @@
+<h1>Perfil de {{ usuario_perfil.username }}</h1>
+<p>
+    Seguidores:
+    {{ usuario_perfil.seguidores.count }}
+</p>
+{% if user.is_authenticated and user != usuario_perfil %}
+
+    {% if ya_sigue %}
+        <a href="/dejar/{{ usuario_perfil.username }}/">
+            Dejar de seguir
+        </a>
+    {% else %}
+        <a href="/seguir/{{ usuario_perfil.username }}/">
+            Seguir
+        </a>
+    {% endif %}
+
+{% endif %}
+<hr>
+{% for post in posts %}
+
+    <p>{{ post.contenido }}</p>
+
+    <small>{{ post.fecha_creacion }}</small>
+
+    <hr>
+
+{% endfor %}
