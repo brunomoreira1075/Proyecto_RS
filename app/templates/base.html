@@ -14,10 +14,13 @@
         <a class="navbar-brand" href="/">MiniTwitter</a>
 
         <div>
-            {% if user.is_authenticated %}
+        {% if user.is_authenticated %}
+                <a class="btn btn-outline-light btn-sm" href="/perfil/{{ user.username }}/">
+                       Mi perfil
+                </a>
+
                 <a class="btn btn-outline-light btn-sm" href="/crear/">Publicar</a>
                 <a class="btn btn-outline-light btn-sm" href="/buscar/">Buscar</a>
-
                 <form method="POST" action="/logout/" class="d-inline">
                     {% csrf_token %}
                     <button class="btn btn-danger btn-sm">Salir</button>
