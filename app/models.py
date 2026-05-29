@@ -36,3 +36,23 @@ class Follow(models.Model):
 
     def __str__(self):
         return f'{self.seguidor} sigue a {self.seguido}'    
+
+class Like(models.Model):
+
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE
+    )
+
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'post')
+
+    def __str__(self):
+        return f'{self.usuario} le dio like a {self.post.id}'

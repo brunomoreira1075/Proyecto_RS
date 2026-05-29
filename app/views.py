@@ -4,8 +4,23 @@ from django.contrib.auth.decorators import login_required
 
 from .forms import RegistroForm, PostForm
 from .models import Post
-
+from .models import Post, Follow, Like
 from django.contrib.auth.decorators import login_required
+
+@login_required
+def toggle_like(request, post_id):
+
+    post = Post.objects.get(id=post_id)
+
+    like, creado = Like.objects.get_or_create(
+        usuario=request.user,
+        post=post
+    )
+
+    if not creado:
+        like.delete()
+
+    return redirect('inicio')
 
 @login_required
 def inicio(request):

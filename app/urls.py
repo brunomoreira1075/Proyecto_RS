@@ -35,4 +35,10 @@ urlpatterns = [
     path('dejar/<str:username>/', views.dejar_de_seguir, name='dejar_de_seguir'),
 
     path('buscar/', views.buscar, name='buscar'),
+
+    path(
+    'like/<int:post_id>/',
+    views.toggle_like,
+    name='toggle_like'
+),
 ]

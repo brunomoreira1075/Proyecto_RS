@@ -27,7 +27,13 @@
             </small>
         </div>
     </div>
+<form method="POST" action="/like/{{ post.id }}/">
+    {% csrf_token %}
 
+    <button class="btn btn-sm btn-outline-danger">
+        ❤️ {{ post.like_set.count }}
+    </button>
+</form>
 {% empty %}
 
     <div class="alert alert-warning">
