@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegistroForm, PostForm, ComentarioForm
-from .models import Post
+from .models import Post, Follow, Like, Hashtag
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -86,12 +86,29 @@ def crear_post(request):
         if form.is_valid():
 
             post = form.save(commit=False)
+
             post.usuario = request.user
+
             post.save()
+
+            hashtags = post.contenido.split()
+
+            for palabra in hashtags:
+
+                if palabra.startswith('#'):
+
+                    nombre_hashtag = palabra[1:]
+
+                    hashtag, creado = Hashtag.objects.get_or_create(
+                        nombre=nombre_hashtag
+                    )
+
+                    hashtag.posts.add(post)
 
             return redirect('inicio')
 
     else:
+
         form = PostForm()
 
     return render(request, 'crear_post.html', {
@@ -162,4 +179,15 @@ def buscar(request):
     return render(request, 'buscar.html', {
         'usuarios': usuarios,
         'query': query
+    })
+
+def ver_hashtag(request, nombre):
+
+    hashtag = Hashtag.objects.get(nombre=nombre)
+
+    posts = hashtag.posts.all().order_by('-fecha_creacion')
+
+    return render(request, 'hashtag.html', {
+        'hashtag': hashtag,
+        'posts': posts
     })

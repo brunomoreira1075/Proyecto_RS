@@ -22,9 +22,24 @@
             </h5>
 
             <p class="card-text">
-                {{ post.contenido }}
-            </p>
 
+        {% for palabra in post.contenido.split %}
+
+        {% if palabra|slice:":1" == "#" %}
+
+            <a href="/hashtag/{{ palabra|slice:"1:" }}/">
+                {{ palabra }}
+            </a>
+
+        {% else %}
+
+            {{ palabra }}
+
+        {% endif %}
+
+        {% endfor %}
+
+        </p>
             <small class="text-muted">
                 {{ post.fecha_creacion }}
             </small>

@@ -75,3 +75,15 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f'{self.usuario}: {self.contenido[:20]}'
+    
+class Hashtag(models.Model):
+
+    nombre = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    posts = models.ManyToManyField(Post)
+
+    def __str__(self):
+        return f'#{self.nombre}'

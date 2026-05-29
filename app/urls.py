@@ -47,4 +47,10 @@ urlpatterns = [
     views.comentar_post,
     name='comentar_post'
     ),
+
+    path(
+    'hashtag/<str:nombre>/',
+    views.ver_hashtag,
+    name='ver_hashtag'
+),
 ]
