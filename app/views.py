@@ -5,9 +5,18 @@ from django.contrib.auth.decorators import login_required
 from .forms import RegistroForm, PostForm
 from .models import Post
 
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def inicio(request):
 
-    posts = Post.objects.all().order_by('-fecha_creacion')
+    siguiendo = Follow.objects.filter(
+        seguidor=request.user
+    ).values_list('seguido', flat=True)
+
+    posts = Post.objects.filter(
+        usuario__in=list(siguiendo) + [request.user.id]
+    ).order_by('-fecha_creacion')
 
     return render(request, 'inicio.html', {
         'posts': posts
@@ -104,3 +113,19 @@ def dejar_de_seguir(request, username):
     ).delete()
 
     return redirect('perfil', username=username)
+
+def buscar(request):
+
+    query = request.GET.get('q')
+
+    usuarios = []
+
+    if query:
+        usuarios = User.objects.filter(
+            username__icontains=query
+        )
+
+    return render(request, 'buscar.html', {
+        'usuarios': usuarios,
+        'query': query
+    })

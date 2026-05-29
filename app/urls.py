@@ -33,4 +33,6 @@ urlpatterns = [
     ),
 
     path('dejar/<str:username>/', views.dejar_de_seguir, name='dejar_de_seguir'),
+
+    path('buscar/', views.buscar, name='buscar'),
 ]
