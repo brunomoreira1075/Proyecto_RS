@@ -40,5 +40,11 @@ urlpatterns = [
     'like/<int:post_id>/',
     views.toggle_like,
     name='toggle_like'
-),
+    ),
+    
+    path(
+    'comentario/<int:post_id>/',
+    views.comentar_post,
+    name='comentar_post'
+    ),
 ]

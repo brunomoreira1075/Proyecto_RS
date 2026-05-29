@@ -14,26 +14,73 @@
 
     <div class="card mb-3 shadow-sm">
         <div class="card-body">
+
             <h5>
                 <a href="/perfil/{{ post.usuario.username }}/" class="text-decoration-none">
                     @{{ post.usuario.username }}
                 </a>
             </h5>
 
-            <p class="card-text">{{ post.contenido }}</p>
+            <p class="card-text">
+                {{ post.contenido }}
+            </p>
 
             <small class="text-muted">
                 {{ post.fecha_creacion }}
             </small>
+
+            <br><br>
+
+            <form method="POST" action="/like/{{ post.id }}/">
+                {% csrf_token %}
+
+                <button class="btn btn-sm btn-outline-danger">
+                    ❤️ {{ post.like_set.count }}
+                </button>
+            </form>
+
+            <hr>
+
+            <h6>Comentarios</h6>
+
+            {% for comentario in post.comentario_set.all %}
+
+                <p>
+                    <strong>
+                        {{ comentario.usuario.username }}
+                    </strong>
+
+                    {{ comentario.contenido }}
+                </p>
+
+            {% empty %}
+
+                <small>
+                    Sin comentarios
+                </small>
+
+            {% endfor %}
+
+            <form method="POST" action="/comentario/{{ post.id }}/">
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="contenido"
+                    class="form-control mt-2"
+                    placeholder="Escribe un comentario"
+                >
+
+                <button class="btn btn-sm btn-primary mt-2">
+                    Comentar
+                </button>
+
+            </form>
+
         </div>
     </div>
-<form method="POST" action="/like/{{ post.id }}/">
-    {% csrf_token %}
 
-    <button class="btn btn-sm btn-outline-danger">
-        ❤️ {{ post.like_set.count }}
-    </button>
-</form>
 {% empty %}
 
     <div class="alert alert-warning">

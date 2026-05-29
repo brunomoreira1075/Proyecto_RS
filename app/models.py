@@ -56,3 +56,22 @@ class Like(models.Model):
 
     def __str__(self):
         return f'{self.usuario} le dio like a {self.post.id}'
+    
+class Comentario(models.Model):
+
+    usuario = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE
+    )
+
+    contenido = models.TextField(max_length=200)
+
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.usuario}: {self.contenido[:20]}'

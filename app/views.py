@@ -2,10 +2,29 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
-from .forms import RegistroForm, PostForm
+from .forms import RegistroForm, PostForm, ComentarioForm
 from .models import Post
-from .models import Post, Follow, Like
 from django.contrib.auth.decorators import login_required
+
+@login_required
+def comentar_post(request, post_id):
+
+    post = Post.objects.get(id=post_id)
+
+    if request.method == 'POST':
+
+        form = ComentarioForm(request.POST)
+
+        if form.is_valid():
+
+            comentario = form.save(commit=False)
+
+            comentario.usuario = request.user
+            comentario.post = post
+
+            comentario.save()
+
+    return redirect('inicio')
 
 @login_required
 def toggle_like(request, post_id):
