@@ -2,34 +2,42 @@
 
 {% block contenido %}
 
-<h2>
-    #{{ hashtag.nombre }}
-</h2>
+<div class="container mt-4">
 
-<hr>
+    <h2>#{{ hashtag.nombre }}</h2>
 
-{% for post in posts %}
+    <hr>
 
-    <div class="card mb-3">
-        <div class="card-body">
+    {% for post in posts %}
 
-            <h5>
-                @{{ post.usuario.username }}
-            </h5>
+        <div class="card shadow-sm mb-3">
 
-            <p>
-                {{ post.contenido }}
-            </p>
+            <div class="card-body">
+
+                <h5>
+                    <a href="{% url 'perfil' post.usuario.username %}">
+                        @{{ post.usuario.username }}
+                    </a>
+                </h5>
+
+                <p>{{ post.contenido }}</p>
+
+                <small class="text-muted">
+                    {{ post.fecha_creacion }}
+                </small>
+
+            </div>
 
         </div>
-    </div>
 
-{% empty %}
+    {% empty %}
 
-    <p>
-        No hay publicaciones.
-    </p>
+        <div class="alert alert-warning">
+            No existen publicaciones con este hashtag.
+        </div>
 
-{% endfor %}
+    {% endfor %}
+
+</div>
 
 {% endblock %}

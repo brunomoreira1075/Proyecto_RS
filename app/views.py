@@ -3,9 +3,28 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 
 from .forms import RegistroForm, PostForm, ComentarioForm
-from .models import Post, Follow, Like, Hashtag
+from .models import Post, Follow, Like, Comentario, Hashtag
 from django.contrib.auth.decorators import login_required
+from .forms import PerfilForm
+from .models import Perfil
 
+@login_required
+def editar_perfil(request):
+    perfil, creado = Perfil.objects.get_or_create(usuario=request.user)
+
+    if request.method == "POST":
+        form = PerfilForm(request.POST, request.FILES, instance=perfil)
+
+        if form.is_valid():
+            form.save()
+            return redirect("perfil", username=request.user.username)
+
+    else:
+        form = PerfilForm(instance=perfil)
+
+    return render(request, "editar_perfil.html", {
+        "form": form
+    })
 @login_required
 def comentar_post(request, post_id):
 
@@ -65,6 +84,7 @@ def registro(request):
         if form.is_valid():
 
             user = form.save()
+            Perfil.objects.create(usuario=user)
             login(request, user)
 
             return redirect('inicio')
@@ -130,12 +150,24 @@ def perfil(request, username):
             seguido=usuario
         ).exists()
 
+    cantidad_publicaciones = posts.count()
+
+    cantidad_seguidores = Follow.objects.filter(
+        seguido=usuario
+    ).count()
+
+    cantidad_siguiendo = Follow.objects.filter(
+        seguidor=usuario
+    ).count()
+
     return render(request, 'perfil.html', {
         'usuario_perfil': usuario,
         'posts': posts,
-        'ya_sigue': ya_sigue
+        'ya_sigue': ya_sigue,
+        'cantidad_publicaciones': cantidad_publicaciones,
+        'cantidad_seguidores': cantidad_seguidores,
+        'cantidad_siguiendo': cantidad_siguiendo,
     })
-
 from .models import Follow
 
 @login_required

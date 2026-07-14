@@ -10,10 +10,15 @@ class Post(models.Model):
         return f'{self.usuario.username}: {self.contenido[:30]}'
     
 class Perfil(models.Model):
-
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
 
     bio = models.TextField(blank=True)
+
+    foto = models.ImageField(
+        upload_to="perfiles/",
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.usuario.username
@@ -77,13 +82,15 @@ class Comentario(models.Model):
         return f'{self.usuario}: {self.contenido[:20]}'
     
 class Hashtag(models.Model):
-
     nombre = models.CharField(
         max_length=100,
         unique=True
     )
 
-    posts = models.ManyToManyField(Post)
+    posts = models.ManyToManyField(
+        Post,
+        related_name="hashtags"
+    )
 
     def __str__(self):
-        return f'#{self.nombre}'
+        return f"#{self.nombre}"

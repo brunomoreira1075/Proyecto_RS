@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-
 urlpatterns = [
 
     path('', views.inicio, name='inicio'),
@@ -12,9 +11,7 @@ urlpatterns = [
 
     path(
         'login/',
-        auth_views.LoginView.as_view(
-            template_name='login.html'
-        ),
+        auth_views.LoginView.as_view(template_name='login.html'),
         name='login'
     ),
 
@@ -23,34 +20,48 @@ urlpatterns = [
         auth_views.LogoutView.as_view(),
         name='logout'
     ),
-    
-    path('perfil/<str:username>/', views.perfil, name='perfil'),
 
     path(
-    'seguir/<str:username>/',
-    views.seguir_usuario,
-    name='seguir_usuario'
+        "perfil/editar/",
+        views.editar_perfil,
+        name="editar_perfil"
     ),
 
-    path('dejar/<str:username>/', views.dejar_de_seguir, name='dejar_de_seguir'),
+    path(
+        'perfil/<str:username>/',
+        views.perfil,
+        name='perfil'
+    ),
+
+    path(
+        'seguir/<str:username>/',
+        views.seguir_usuario,
+        name='seguir_usuario'
+    ),
+
+    path(
+        'dejar/<str:username>/',
+        views.dejar_de_seguir,
+        name='dejar_de_seguir'
+    ),
 
     path('buscar/', views.buscar, name='buscar'),
 
     path(
-    'like/<int:post_id>/',
-    views.toggle_like,
-    name='toggle_like'
-    ),
-    
-    path(
-    'comentario/<int:post_id>/',
-    views.comentar_post,
-    name='comentar_post'
+        'like/<int:post_id>/',
+        views.toggle_like,
+        name='toggle_like'
     ),
 
     path(
-    'hashtag/<str:nombre>/',
-    views.ver_hashtag,
-    name='ver_hashtag'
-),
+        'comentario/<int:post_id>/',
+        views.comentar_post,
+        name='comentar_post'
+    ),
+
+    path(
+        'hashtag/<str:nombre>/',
+        views.ver_hashtag,
+        name='ver_hashtag'
+    ),
 ]

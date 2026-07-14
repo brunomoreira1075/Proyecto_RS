@@ -1,28 +1,61 @@
 <h1>Perfil de {{ usuario_perfil.username }}</h1>
-<p>
-    Seguidores:
-    {{ usuario_perfil.seguidores.count }}
-</p>
+
+{% if usuario_perfil.perfil.foto %}
+    <img src="{{ usuario_perfil.perfil.foto.url }}"
+         width="150"
+         height="150"
+         style="border-radius:50%;">
+{% endif %}
+
+<div>
+    <strong>Seguidores:</strong> {{ cantidad_seguidores }}
+    |
+    <strong>Siguiendo:</strong> {{ cantidad_siguiendo }}
+    |
+    <strong>Publicaciones:</strong> {{ cantidad_publicaciones }}
+</div>
+{% if user == usuario_perfil %}
+    <a href="{% url 'editar_perfil' %}">
+        Editar perfil
+    </a>
+{% endif %}
+
 {% if user.is_authenticated and user != usuario_perfil %}
 
     {% if ya_sigue %}
-        <a href="/dejar/{{ usuario_perfil.username }}/">
+        <a href="{% url 'dejar_de_seguir' usuario_perfil.username %}">
             Dejar de seguir
         </a>
     {% else %}
-        <a href="/seguir/{{ usuario_perfil.username }}/">
+        <a href="{% url 'seguir_usuario' usuario_perfil.username %}">
             Seguir
         </a>
     {% endif %}
 
 {% endif %}
+
 <hr>
+
 {% for post in posts %}
 
     <p>{{ post.contenido }}</p>
 
+    {% if post.hashtags.all %}
+        <div>
+            {% for hashtag in post.hashtags.all %}
+                <a href="{% url 'ver_hashtag' hashtag.nombre %}">
+                    #{{ hashtag.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+    {% endif %}
+
     <small>{{ post.fecha_creacion }}</small>
 
     <hr>
+
+{% empty %}
+
+<p>Este usuario todavía no realizó publicaciones.</p>
 
 {% endfor %}
