@@ -5,102 +5,96 @@
 <h2 class="mb-4">Inicio</h2>
 
 {% if user.is_authenticated %}
-    <div class="alert alert-primary">
-        Bienvenido, <strong>{{ user.username }}</strong>
-    </div>
+<div class="alert alert-primary">
+    Bienvenido, <strong>{{ user.username }}</strong>
+</div>
 {% endif %}
 
 {% for post in posts %}
 
-    <div class="card mb-3 shadow-sm">
-        <div class="card-body">
+<div class="card mb-4 shadow-sm">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between">
 
             <h5>
-                <a href="/perfil/{{ post.usuario.username }}/" class="text-decoration-none">
+                <a href="{% url 'perfil' post.usuario.username %}"
+                   class="text-decoration-none">
                     @{{ post.usuario.username }}
                 </a>
             </h5>
 
-            <p class="card-text">
-
-        {% for palabra in post.contenido.split %}
-
-        {% if palabra|slice:":1" == "#" %}
-
-            <a href="/hashtag/{{ palabra|slice:"1:" }}/">
-                {{ palabra }}
-            </a>
-
-        {% else %}
-
-            {{ palabra }}
-
-        {% endif %}
-
-        {% endfor %}
-
-        </p>
             <small class="text-muted">
                 {{ post.fecha_creacion }}
             </small>
 
-            <br><br>
-
-            <form method="POST" action="/like/{{ post.id }}/">
-                {% csrf_token %}
-
-                <button class="btn btn-sm btn-outline-danger">
-                    ❤️ {{ post.like_set.count }}
-                </button>
-            </form>
-
-            <hr>
-
-            <h6>Comentarios</h6>
-
-            {% for comentario in post.comentario_set.all %}
-
-                <p>
-                    <strong>
-                        {{ comentario.usuario.username }}
-                    </strong>
-
-                    {{ comentario.contenido }}
-                </p>
-
-            {% empty %}
-
-                <small>
-                    Sin comentarios
-                </small>
-
-            {% endfor %}
-
-            <form method="POST" action="/comentario/{{ post.id }}/">
-
-                {% csrf_token %}
-
-                <input
-                    type="text"
-                    name="contenido"
-                    class="form-control mt-2"
-                    placeholder="Escribe un comentario"
-                >
-
-                <button class="btn btn-sm btn-primary mt-2">
-                    Comentar
-                </button>
-
-            </form>
-
         </div>
+
+        <p class="card-text mt-3">
+            {{ post.contenido }}
+        </p>
+
+        {% if post.hashtags.all %}
+        <div class="mb-3">
+            {% for hashtag in post.hashtags.all %}
+                <a href="{% url 'ver_hashtag' hashtag.nombre %}"
+                   class="badge bg-primary text-decoration-none me-1">
+                    #{{ hashtag.nombre }}
+                </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'toggle_like' post.id %}">
+            {% csrf_token %}
+
+            <button class="btn btn-outline-danger btn-sm">
+                ❤️ {{ post.like_set.count }}
+            </button>
+        </form>
+
+        <hr>
+
+        <h6>Comentarios</h6>
+
+        {% for comentario in post.comentario_set.all %}
+
+            <div class="mb-2">
+                <strong>@{{ comentario.usuario.username }}</strong><br>
+                {{ comentario.contenido }}
+            </div>
+
+        {% empty %}
+
+            <small class="text-muted">
+                Sin comentarios.
+            </small>
+
+        {% endfor %}
+
+        <form method="POST" action="{% url 'comentar_post' post.id %}">
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="contenido"
+                class="form-control mt-3"
+                placeholder="Escribe un comentario">
+
+            <button class="btn btn-primary btn-sm mt-2">
+                Comentar
+            </button>
+
+        </form>
+
     </div>
+</div>
 
 {% empty %}
 
-    <div class="alert alert-warning">
-        No hay publicaciones para mostrar.
-    </div>
+<div class="alert alert-warning">
+    No hay publicaciones para mostrar.
+</div>
 
 {% endfor %}
 
