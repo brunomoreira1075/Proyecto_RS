@@ -1,23 +1,27 @@
-<h1>Buscar usuarios</h1>
+{% extends 'base.html' %}
 
-<form method="GET">
+{% block contenido %}
 
-    <input type="text" name="q" placeholder="Buscar usuario">
+<h1 class="page-title">Buscar usuarios</h1>
 
-    <button type="submit">
-        Buscar
-    </button>
-
+<form method="GET" class="search-bar">
+    <input type="text" name="q" placeholder="Buscar por nombre de usuario" value="{{ request.GET.q }}">
+    <button type="submit" class="btn btn-primary">Buscar</button>
 </form>
 
-<hr>
+<div class="card">
+    <div class="card-body" style="padding:8px 16px;">
 
-{% for usuario in usuarios %}
+        {% for usuario in usuarios %}
+            <a href="/perfil/{{ usuario.username }}/" class="result-row">
+                <span class="avatar">{{ usuario.username|slice:":1"|upper }}</span>
+                <span class="username-link">{{ usuario.username }}</span>
+            </a>
+        {% empty %}
+            <p class="empty-note" style="padding:14px 0;">No se encontraron usuarios.</p>
+        {% endfor %}
 
-    <h3>
-        <a href="/perfil/{{ usuario.username }}/">
-            {{ usuario.username }}
-        </a>
-    </h3>
+    </div>
+</div>
 
-{% endfor %}
+{% endblock %}

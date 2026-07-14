@@ -2,26 +2,19 @@
 
 {% block contenido %}
 
-<div class="row justify-content-center">
-    <div class="col-md-7">
-        <div class="card shadow">
-            <div class="card-body">
-                <h3 class="mb-4">Nueva publicación</h3>
+<div class="card form-card">
+    <div class="card-body">
+        <h3>Nueva publicación</h3>
 
-                <form method="POST">
-                    {% csrf_token %}
-                    {{ form.as_p }}
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-                    <button class="btn btn-primary">
-                        Publicar
-                    </button>
-
-                    <a href="/" class="btn btn-secondary">
-                        Cancelar
-                    </a>
-                </form>
+            <div style="display:flex; gap:10px; margin-top:6px;">
+                <button class="btn btn-primary">Publicar</button>
+                <a href="/" class="btn btn-ghost">Cancelar</a>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 

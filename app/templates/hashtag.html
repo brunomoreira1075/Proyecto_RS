@@ -2,42 +2,36 @@
 
 {% block contenido %}
 
-<div class="container mt-4">
+<h1 class="page-title">#{{ hashtag.nombre }}</h1>
 
-    <h2>#{{ hashtag.nombre }}</h2>
+{% for post in posts %}
 
-    <hr>
+    <div class="card post">
+        <div class="card-body">
 
-    {% for post in posts %}
-
-        <div class="card shadow-sm mb-3">
-
-            <div class="card-body">
-
-                <h5>
-                    <a href="{% url 'perfil' post.usuario.username %}">
+            <div class="post-head">
+                <div class="post-author">
+                    <a href="{% url 'perfil' post.usuario.username %}" class="avatar">
+                        {{ post.usuario.username|slice:":1"|upper }}
+                    </a>
+                    <a href="{% url 'perfil' post.usuario.username %}" class="username-link">
                         @{{ post.usuario.username }}
                     </a>
-                </h5>
-
-                <p>{{ post.contenido }}</p>
-
-                <small class="text-muted">
-                    {{ post.fecha_creacion }}
-                </small>
-
+                </div>
+                <span class="timestamp">{{ post.fecha_creacion }}</span>
             </div>
 
+            <p class="post-content">{{ post.contenido }}</p>
+
         </div>
+    </div>
 
-    {% empty %}
+{% empty %}
 
-        <div class="alert alert-warning">
-            No existen publicaciones con este hashtag.
-        </div>
+    <div class="alert alert-warning">
+        No existen publicaciones con este hashtag.
+    </div>
 
-    {% endfor %}
-
-</div>
+{% endfor %}
 
 {% endblock %}

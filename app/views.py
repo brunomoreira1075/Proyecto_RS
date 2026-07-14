@@ -1,26 +1,30 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-
-from .forms import RegistroForm, PostForm, ComentarioForm
-from .models import Post, Follow, Like, Comentario, Hashtag
-from django.contrib.auth.decorators import login_required
-from .forms import PerfilForm
-from .models import Perfil
+from .forms import RegistroForm, PostForm, ComentarioForm, EditarPerfilForm
+from .models import Perfil, Post, Follow, Like, Comentario, Hashtag
 
 @login_required
 def editar_perfil(request):
     perfil, creado = Perfil.objects.get_or_create(usuario=request.user)
 
     if request.method == "POST":
-        form = PerfilForm(request.POST, request.FILES, instance=perfil)
+        form = EditarPerfilForm(
+            request.POST,
+            request.FILES,
+            instance=perfil,
+            user=request.user
+        )
 
         if form.is_valid():
             form.save()
             return redirect("perfil", username=request.user.username)
 
     else:
-        form = PerfilForm(instance=perfil)
+        form = EditarPerfilForm(
+            instance=perfil,
+            user=request.user
+        )
 
     return render(request, "editar_perfil.html", {
         "form": form
@@ -62,19 +66,16 @@ def toggle_like(request, post_id):
 
 @login_required
 def inicio(request):
+    posts = Post.objects.all().order_by("-fecha_creacion")
 
     siguiendo = Follow.objects.filter(
         seguidor=request.user
-    ).values_list('seguido', flat=True)
+    ).values_list("seguido_id", flat=True)
 
-    posts = Post.objects.filter(
-        usuario__in=list(siguiendo) + [request.user.id]
-    ).order_by('-fecha_creacion')
-
-    return render(request, 'inicio.html', {
-        'posts': posts
+    return render(request, "inicio.html", {
+        "posts": posts,
+        "siguiendo": siguiendo,
     })
-
 def registro(request):
 
     if request.method == 'POST':
@@ -139,6 +140,9 @@ from django.contrib.auth.models import User
 
 def perfil(request, username):
     usuario = User.objects.get(username=username)
+
+    # Crear el perfil si no existe
+    Perfil.objects.get_or_create(usuario=usuario)
 
     posts = Post.objects.filter(usuario=usuario).order_by('-fecha_creacion')
 

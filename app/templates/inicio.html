@@ -2,98 +2,211 @@
 
 {% block contenido %}
 
-<h2 class="mb-4">Inicio</h2>
+<h1 class="page-title">Inicio</h1>
 
 {% if user.is_authenticated %}
-<div class="alert alert-primary">
+<div class="alert alert-info">
     Bienvenido, <strong>{{ user.username }}</strong>
 </div>
+<br>
 {% endif %}
 
 {% for post in posts %}
 
-<div class="card mb-4 shadow-sm">
+<div class="card post">
+
     <div class="card-body">
 
-        <div class="d-flex justify-content-between">
+        <!-- CABECERA -->
+        <div class="feed-header">
 
-            <h5>
-                <a href="{% url 'perfil' post.usuario.username %}"
-                   class="text-decoration-none">
-                    @{{ post.usuario.username }}
+            <div class="feed-left">
+
+                <a href="{% url 'perfil' post.usuario.username %}">
+
+                    <div class="avatar avatar-lg">
+
+                        {% if post.usuario.perfil.foto %}
+                            <img src="{{ post.usuario.perfil.foto.url }}" alt="">
+                        {% else %}
+                            {{ post.usuario.username|slice:":1"|upper }}
+                        {% endif %}
+
+                    </div>
+
                 </a>
-            </h5>
 
-            <small class="text-muted">
-                {{ post.fecha_creacion }}
-            </small>
+                <div class="feed-info">
 
-        </div>
+                    {% if post.usuario.first_name or post.usuario.last_name %}
+                        <div class="feed-name">
+                            {{ post.usuario.first_name }} {{ post.usuario.last_name }}
+                        </div>
+                    {% endif %}
 
-        <p class="card-text mt-3">
-            {{ post.contenido }}
-        </p>
+                    <a href="{% url 'perfil' post.usuario.username %}" class="feed-user">
+                        @{{ post.usuario.username }}
+                    </a>
 
-        {% if post.hashtags.all %}
-        <div class="mb-3">
-            {% for hashtag in post.hashtags.all %}
-                <a href="{% url 'ver_hashtag' hashtag.nombre %}"
-                   class="badge bg-primary text-decoration-none me-1">
-                    #{{ hashtag.nombre }}
-                </a>
-            {% endfor %}
-        </div>
-        {% endif %}
+                    <div class="feed-date">
+                        {{ post.fecha_creacion|date:"d/m/Y H:i" }}
+                    </div>
 
-        <form method="POST" action="{% url 'toggle_like' post.id %}">
-            {% csrf_token %}
+                </div>
 
-            <button class="btn btn-outline-danger btn-sm">
-                ❤️ {{ post.like_set.count }}
-            </button>
-        </form>
-
-        <hr>
-
-        <h6>Comentarios</h6>
-
-        {% for comentario in post.comentario_set.all %}
-
-            <div class="mb-2">
-                <strong>@{{ comentario.usuario.username }}</strong><br>
-                {{ comentario.contenido }}
             </div>
 
-        {% empty %}
+            <div class="feed-follow">
 
-            <small class="text-muted">
-                Sin comentarios.
-            </small>
+                {% if post.usuario != user %}
 
-        {% endfor %}
+                    {% if post.usuario.id in siguiendo %}
 
-        <form method="POST" action="{% url 'comentar_post' post.id %}">
-            {% csrf_token %}
+                        <a href="{% url 'dejar_de_seguir' post.usuario.username %}"
+                           class="btn btn-ghost">
+                            Siguiendo
+                        </a>
 
-            <input
-                type="text"
-                name="contenido"
-                class="form-control mt-3"
-                placeholder="Escribe un comentario">
+                    {% else %}
 
-            <button class="btn btn-primary btn-sm mt-2">
-                Comentar
-            </button>
+                        <a href="{% url 'seguir_usuario' post.usuario.username %}"
+                           class="btn btn-primary">
+                            Seguir
+                        </a>
 
-        </form>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- PUBLICACIÓN -->
+
+        <div class="feed-content">
+
+            <p class="post-content">
+                {{ post.contenido }}
+            </p>
+
+            {% if post.hashtags.all %}
+
+            <div class="hashtags">
+
+                {% for hashtag in post.hashtags.all %}
+
+                    <a href="{% url 'ver_hashtag' hashtag.nombre %}"
+                       class="tag">
+
+                        #{{ hashtag.nombre }}
+
+                    </a>
+
+                {% endfor %}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+        <!-- LIKE -->
+
+        <div class="feed-actions">
+
+            <form method="POST"
+                  action="{% url 'toggle_like' post.id %}"
+                  class="inline">
+
+                {% csrf_token %}
+
+                <button class="like-btn">
+
+                    ❤️ {{ post.like_set.count }}
+
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- COMENTARIOS -->
+
+        <div class="feed-comments">
+
+            <p class="comments-label">
+                Comentarios
+            </p>
+                        {% for comentario in post.comentario_set.all %}
+
+                <div class="comment">
+
+                    <div class="avatar comment-avatar">
+
+                        {% if comentario.usuario.perfil.foto %}
+                            <img src="{{ comentario.usuario.perfil.foto.url }}" alt="">
+                        {% else %}
+                            {{ comentario.usuario.username|slice:":1"|upper }}
+                        {% endif %}
+
+                    </div>
+
+                    <div class="comment-body">
+
+                        <strong>
+
+                            @{{ comentario.usuario.username }}
+
+                        </strong>
+
+                        <p>
+
+                            {{ comentario.contenido }}
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <p class="empty-note">
+                    Sin comentarios todavía.
+                </p>
+
+            {% endfor %}
+
+            <form method="POST"
+                  action="{% url 'comentar_post' post.id %}"
+                  class="comment-form">
+
+                {% csrf_token %}
+
+                <input
+                    type="text"
+                    name="contenido"
+                    placeholder="Escribe un comentario...">
+
+                <button class="btn btn-primary">
+                    Enviar
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
+
 </div>
 
 {% empty %}
 
 <div class="alert alert-warning">
-    No hay publicaciones para mostrar.
+
+    No hay publicaciones.
+
 </div>
 
 {% endfor %}
